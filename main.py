@@ -8,6 +8,6 @@ if len(sys.argv) <= 1:
   sys.exit(0)
 FN = sys.argv[1]
 
-data = m2v.mat2vec(FN)
+data = m2v.file2vec(FN)
 for d in data:
   print d
