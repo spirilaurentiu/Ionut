@@ -23,7 +23,4 @@ def mat2vec(FN):
           data.append(float(word))
   data = np.array(data)
   return data
-
-
-for d in data:
-  print d
+#
