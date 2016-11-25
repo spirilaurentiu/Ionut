@@ -1,6 +1,7 @@
 import sys
 import re
 import numpy as np
+import copy
 
 class Drug:
   """
@@ -27,6 +28,8 @@ class Drug:
     self.address = np.array([i, j])
   def get_address(self):
     return self.address
+  def print_params(self):
+    print self.address, self.ID, self.pno, self.ppos, self.w, self.mw, self.cono
 #
 
 def file2vec(FN):
@@ -55,14 +58,39 @@ def DrugsFile_to_16x24(FN):
   :type string
   :return type: 16x24 matrix of IDs
   """
+  nrow = 16
+  ncol = 24
+  D = Drug("-1", -1, "-1", -1., -1., -1)
+  data = [[copy.deepcopy(D) for x in range(ncol)] for y in range(nrow)] 
   with open(FN, 'r') as inFN:
+    nr = -1
     for line in inFN:
-      words = re.sub(r'[.!,;?]', ' ', line).split()
-      if (len(words) > 1) and (len(words) != 24):
-        print "Wrong number of columns:", len(words)
-        return None
-      for word in words:
-        data.append(word)
+      words = re.sub(r'[!,;?]', ' ', line).split()
+      if (len(words) > 1): 
+        if (len(words) != ncol):
+          print "Wrong number of columns:", len(words)
+          return None
+        nr = nr + 1
+        i = int(nr/6)
+        j = -1
+        for word in words:
+          j = j + 1
+          #print str(i) + "," + str(j) + "|", # testing
+          data[i][j].set_address(i, j)
+          if (nr % 6) == 0:
+            data[i][j].ID = word
+          if (nr % 6) == 1:
+            data[i][j].pno = int(word)
+          if (nr % 6) == 2:
+            data[i][j].ppos = word
+          if (nr % 6) == 3:
+            data[i][j].w = float(word)
+          if (nr % 6) == 4:
+            data[i][j].mw = float(word)
+          if (nr % 6) == 5:
+            data[i][j].cono = int(word)
+        #print # testing
+  return data
 #
 
 def m16x24_to_m4x8x12(m16x24):
