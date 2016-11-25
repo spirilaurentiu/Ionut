@@ -2,6 +2,27 @@ import sys
 import re
 import numpy as np
 
+class Drug(self):
+  """
+  Holds information about a drug
+  """
+  def _init_(self, ID, pno, ppos, w, mw, cono):
+    """
+    :param ID: Company ID :type string
+    :param pno: Original Plate number :type int
+    :param ppos: Original plate position :type string
+    :param w: Original Weight :type float
+    :param mw: Molecular Weight :type float
+    :param cono: Company number :type int
+    """
+    self.ID = ID
+    self.pno = pno
+    self.ppos = ppos
+    self.w = w
+    self.mw = mw
+    self.cono = cono
+#
+
 def file2vec(FN):
   """
   Reads matrix from file and turns it into numpy array
@@ -18,6 +39,24 @@ def file2vec(FN):
           data.append(float(word))
   data = np.array(data)
   return data
+#
+
+def DrugsFile_to_16x24(FN):
+  """
+  Reads drugs info from a file and turns it into
+  a 16x24 bidim array
+  :param FN: File
+  :type string
+  :return type: 16x24 matrix of IDs
+  """
+  with open(FN, 'r') as inFN:
+    for line in inFN:
+      words = re.sub(r'[.!,;?]', ' ', line).split()
+      if (len(words) > 1) and (len(words) != 24):
+        print "Wrong number of columns:", len(words)
+        return None
+      for word in words:
+        data.append(word)
 #
 
 def m16x24_to_m4x8x12(m16x24):
