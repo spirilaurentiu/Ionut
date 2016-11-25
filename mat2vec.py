@@ -2,11 +2,11 @@ import sys
 import re
 import numpy as np
 
-class Drug(self):
+class Drug:
   """
   Holds information about a drug
   """
-  def _init_(self, ID, pno, ppos, w, mw, cono):
+  def __init__(self, ID, pno, ppos, w, mw, cono):
     """
     :param ID: Company ID :type string
     :param pno: Original Plate number :type int
@@ -21,6 +21,12 @@ class Drug(self):
     self.w = w
     self.mw = mw
     self.cono = cono
+    self.address = np.array([0, 0])
+
+  def set_address(self, i, j):
+    self.address = np.array([i, j])
+  def get_address(self):
+    return self.address
 #
 
 def file2vec(FN):
