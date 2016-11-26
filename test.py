@@ -99,7 +99,14 @@ for i in range(16):
   print 
 print "Done."
 
-
+print "Testing cherryPick..."
+cpinput = m16x24_data
+data = m2v.cherryPick(cpinput, 4.0)
+for i in range(16):
+  for j in range(24):
+    print "%.0f " % (data[i][j][2]) ,
+  print 
+print "Done."
 
 
 

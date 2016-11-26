@@ -215,4 +215,39 @@ def _4xm8x12_to_m16x24(input):
   return data
 #
 
+def cherryPick(input, cutoff):
+  """
+  :param input: input 16x24 matrix
+  :param type: 16x24x3 numpy array
+  :return type: 16x24x3 numpy array with top2 bot2 left4 right4 margins
+  """
+  nrows = 16
+  ncols = 24
+  lm = rm = 4
+  tm = bm = 2
+  dnrows = nrows - tm - bm
+  dncols = ncols - lm - rm
+  data = np.zeros((nrows, ncols, 3)) # 16 x 24 x [i, j, activity]
+  toti = -1
+  for i in range(nrows): # Initialize return data
+    for j in range(ncols):
+      data[i][j][0] = i
+      data[i][j][1] = j
+      data[i][j][2] = -1.0
+  for i in range(nrows):
+    for j in range(ncols):
+      if input[i][j][2] >= cutoff:
+        toti = toti + 1
+        di = np.floor(toti/16) + tm
+        if di > nrows:
+          print "Too many hits: ", toti, ">", (16 - 2 - 2) * (24 - 4 - 4), 
+          print ".You may consider changing the margins"
+        dj = (toti % 16) + lm
+        #print "%.0f %.0f|" % (di, dj), # testing
+        data[di][dj][2] = input[i][j][2]
+    print
+  return data
+# 
+
+
 
