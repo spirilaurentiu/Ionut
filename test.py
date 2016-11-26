@@ -82,6 +82,26 @@ for mi in range(4):
     print
 print "Done."
 
+print "Testing M8x12File_to_4xm8x12..."
+data = m2v.M8x12File_to_4xm8x12("4xm8x12.txt")
+print data
+print "Done."
+
+print "Testing _4xm8x12_to_m16x24..."
+m16x24_data = m2v._4xm8x12_to_m16x24(data)
+for i in range(16):
+  for j in range(24):
+    print "|%.0f %.0f %.0f|" % (m16x24_data[i][j][0], m16x24_data[i][j][1], m16x24_data[i][j][2]) ,
+  print 
+for i in range(16):
+  for j in range(24):
+    print "%.0f " % (m16x24_data[i][j][2]) ,
+  print 
+print "Done."
+
+
+
+
 
 
 

@@ -121,6 +121,64 @@ def M16x24File_to_16x24(FN):
         #print # testing
   return data
 
+def M8x12File_to_4xm8x12(FN):
+  """
+  Reads activity info from a file and turns it into
+  four 8x12x3 numpy array. Sets the addresses as if they were
+  taken from a 16x24 plate.
+  :param FN: File
+  :type string
+  :return type: 8x12x3 array
+  """
+  nrows = 8
+  ncols = 12
+  D = np.zeros((nrows, ncols, 3)) # 16 x 24 x [i, j, activity]
+  data = [copy.deepcopy(D) for x in range(4)]
+  mi = 0
+  di = dj = 0
+  read_flag = 0
+  with open(FN, 'r') as inFN:
+    i = -1
+    for line in inFN:
+      words = re.sub(r'[!,;?\t]', ' ', line).split()
+      if (len(words) == 0) and (read_flag == 1): # Read the next matrix
+        read_flag = 0
+        i = -1
+        mi = mi + 1
+      if (len(words) > 1):
+        read_flag = 1
+        if (len(words) != ncols):
+          print "Wrong number of columns:", len(words)
+          return None
+        i = i + 1
+        j = -1
+        for word in words:
+          j = j + 1
+          #print str(i) + "," + str(j) + "|", # testing
+          di = (i * 2) + np.floor(mi/2)
+          dj = (j * 2) + (mi % 2)
+          (data[mi])[i][j] = np.array([di, dj, float(word)])
+        #print # testing
+  return data
+#
+
+def copyAddressInfo(m_src, m_dest):
+  """
+  Designed to copy only address info ([i][j][0, 1]) 
+  from a 8x12 matrix to another 8x12.
+  :param m_src: 8 x 12 x 3 numpy array
+  :param m_dest: 8 x 12 x 3 array
+  """
+  if m_src.shape != m_dest.shape:
+    print "Matrices don't have the same shape:", m_src.shape, m_dest.shape 
+    sys.exit(1)
+  for i in range(m_src.shape[0]):
+    for j in range(m_src.shape[1]):
+      m_dest[i][j][0] = m_src[i][j][0]
+      m_dest[i][j][1] = m_src[i][j][1]
+  #TODO: test
+#
+
 def m16x24_to_4xm8x12(m16x24):
   """
   Turns 16x24 matrix into four 8x12 matrices
@@ -138,14 +196,23 @@ def m16x24_to_4xm8x12(m16x24):
   return data
 #
 
-def _4xm8x12_to_m16x24(m8x12_0, m8x12_1, m8x12_2, m8x12_3):
+def _4xm8x12_to_m16x24(input):
   """
   Turns four 8x12 matrices into one 16x24 matrix
-  :param m8x12_0, m8x12_1, m8x12_2, m8x12_3: four input matrices
+  :param list(m8x12_0, m8x12_1, m8x12_2, m8x12_3): List of four input matrices
   :type 8x12 numpy bidimensional array
   :return type: 16x24 numpy bidimensional array
   """
-  print "Not implemented."
+  nrows = 16
+  ncols = 24
+  data = np.zeros((nrows, ncols, 3)) # 16 x 24 x [i, j, activity]
+  for mi in range(4):
+    for i in range(8):
+      for j in range(12):
+        data[(input[mi])[i][j][0]][(input[mi])[i][j][1]][0] = (input[mi])[i][j][0]
+        data[(input[mi])[i][j][0]][(input[mi])[i][j][1]][1] = (input[mi])[i][j][1]
+        data[(input[mi])[i][j][0]][(input[mi])[i][j][1]][2] = (input[mi])[i][j][2]
+  return data
 #
 
 
