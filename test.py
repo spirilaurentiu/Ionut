@@ -64,9 +64,26 @@ data = m2v.DrugsFile_to_16x24("IDs_16x24.fake.txt")
 for i in range(nrows):
   for j in range(ncols):
     data[i][j].print_params()
-
-
 print "Done."
+
+print "Testing M16x24File_to_16x24..."
+data = m2v.M16x24File_to_16x24("m16x24.txt")
+for d in data:
+  print d
+print "Done."
+
+print "Testing m16x24_to_4xm8x12..."
+m8x12s = m2v.m16x24_to_4xm8x12(data)
+for mi in range(4):
+  print "matrix:", mi+1
+  for i in range(8):
+    for j in range(12):
+      print int(m8x12s[mi][i][j][0]),  int(m8x12s[mi][i][j][1]), m8x12s[mi][i][j][2], "|", 
+    print
+print "Done."
+
+
+
 
 
 
