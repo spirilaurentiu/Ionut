@@ -231,8 +231,8 @@ def cherryPick(input, cutoff):
   toti = -1
   for i in range(nrows): # Initialize return data
     for j in range(ncols):
-      data[i][j][0] = i
-      data[i][j][1] = j
+      data[i][j][0] = 0
+      data[i][j][1] = 0
       data[i][j][2] = -1.0
   for i in range(nrows):
     for j in range(ncols):
@@ -244,10 +244,9 @@ def cherryPick(input, cutoff):
           print ".You may consider changing the margins"
         dj = (toti % 16) + lm
         #print "%.0f %.0f|" % (di, dj), # testing
-        data[di][dj][2] = input[i][j][2]
+        data[di][dj] = input[i][j]
     print
   return data
 # 
-
 
 
