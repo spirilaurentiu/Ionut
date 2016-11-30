@@ -32,6 +32,30 @@ class Drug:
     print self.address, self.ID, self.pno, self.ppos, self.w, self.mw, self.cono
 #
 
+def print8x12(data):
+  """
+  :param data:
+  :param type: 8x12x3 numpy array 
+  """
+  for i in range(8):
+    for j in range(12):
+      print "%6.3f" % (data[i][j][2]),
+    print
+  print
+#
+
+def print16x24(data):
+  """
+  :param data:
+  :param type: 16x24x3 numpy array 
+  """
+  for i in range(16):
+    for j in range(24):
+      print "%6.3f" % (data[i][j][2]),
+    print
+  print
+#
+
 def file2vec(FN):
   """
   Reads matrix from file and turns it into numpy array
@@ -159,6 +183,18 @@ def M8x12File_to_4xm8x12(FN):
           dj = (j * 2) + (mi % 2)
           (data[mi])[i][j] = np.array([di, dj, float(word)])
         #print # testing
+
+  for mi in range(4):
+    for i in range(nrows):
+      if (i == 0) or (i == 7):
+        for j in range(12): # all cols
+          if (j == 1) or (j == 10):
+            (data[mi])[i][j][2] = -1
+    for i in range(nrows):
+      for j in range(12):
+        if (j == 0) or (j == 11):
+          (data[mi])[i][j][2] = -1
+
   return data
 #
 
@@ -215,7 +251,24 @@ def _4xm8x12_to_m16x24(input):
   return data
 #
 
-def cherryPick(input, cutoff):
+def intializeHitList(nrows, ncols):
+  """
+  :param nrows: # of rows 
+  :param type: int
+  :param ncols: # of columns
+  :param type: int
+  :return type: 16x24x3
+  """
+  data = np.zeros((nrows, ncols, 3))
+  for i in range(nrows):
+    for j in range(ncols):
+      data[i][j][0] = 0
+      data[i][j][1] = 0
+      data[i][j][2] = -1.0
+  return data
+#
+
+def cherryPick(input, hitlist, cutoff):
   """
   :param input: input 16x24 matrix
   :param type: 16x24x3 numpy array
@@ -227,14 +280,35 @@ def cherryPick(input, cutoff):
   tm = bm = 2
   dnrows = nrows - tm - bm
   dncols = ncols - lm - rm
-  data = np.zeros((nrows, ncols, 3)) # 16 x 24 x [i, j, activity]
   toti = -1
-  for i in range(nrows): # Initialize return data
-    for j in range(ncols):
-      data[i][j][0] = 0
-      data[i][j][1] = 0
-      data[i][j][2] = -1.0
+  alreadyIn = 0
+  foundHitFlag = False
+  noHitFlag = False
+
+  # Shift and place after the hits
   for i in range(nrows):
+    for j in range(ncols):
+      #print "hitlist address", hitlist[i][j][0], hitlist[i][j][1]
+      if (hitlist[i][j][0] != 0) or (hitlist[i][j][1] != 0):
+        print "Found hit at", i, j
+        foundHitFlag = True
+        break
+    if foundHitFlag:
+      break
+  print "Looking in range", tm, nrows-bm, lm, ncols-rm
+  for ai in range(tm, nrows-bm): # Start reading hits already in place
+    for aj in range(lm, ncols-rm):
+      if (hitlist[ai][aj][0] == 0) and (hitlist[ai][aj][1] == 0):
+        print "No hit at", ai, aj
+        noHitFlag = True
+        break
+      else:
+        alreadyIn = alreadyIn + 1
+    if noHitFlag:
+      break
+
+  toti = toti + alreadyIn
+  for i in range(nrows): # Place the hits
     for j in range(ncols):
       if input[i][j][2] >= cutoff:
         toti = toti + 1
@@ -244,9 +318,9 @@ def cherryPick(input, cutoff):
           print ".You may consider changing the margins"
         dj = (toti % 16) + lm
         #print "%.0f %.0f|" % (di, dj), # testing
-        data[di][dj] = input[i][j]
-    print
-  return data
+        hitlist[di][dj] = input[i][j]
+    #print # Testing
+  return hitlist
 # 
 
 
