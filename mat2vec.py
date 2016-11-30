@@ -288,18 +288,14 @@ def cherryPick(input, hitlist, cutoff):
   # Shift and place after the hits
   for i in range(nrows):
     for j in range(ncols):
-      #print "hitlist address", hitlist[i][j][0], hitlist[i][j][1]
       if (hitlist[i][j][0] != 0) or (hitlist[i][j][1] != 0):
-        print "Found hit at", i, j
         foundHitFlag = True
         break
     if foundHitFlag:
       break
-  print "Looking in range", tm, nrows-bm, lm, ncols-rm
   for ai in range(tm, nrows-bm): # Start reading hits already in place
     for aj in range(lm, ncols-rm):
       if (hitlist[ai][aj][0] == 0) and (hitlist[ai][aj][1] == 0):
-        print "No hit at", ai, aj
         noHitFlag = True
         break
       else:

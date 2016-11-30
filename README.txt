@@ -1,0 +1,3 @@
+Run with
+  python main.py --IDs IDs_16x24.txt --screens primary_screen1.txt primary_screen2.txt ...
+IDs_16x24.txt is a list of IDs and primary_screen... are the screening files
