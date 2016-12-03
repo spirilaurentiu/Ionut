@@ -251,6 +251,26 @@ def _4xm8x12_to_m16x24(input):
   return data
 #
 
+def m16x24_to_Drugs96x24(input, druglist):
+  """
+  Turns n 16x24 matrix of hits into a list of hits
+  :param input type: 16x24x3 numpy array
+  :param druglist type: 16x24 bidim array of Drug
+  :return type: 16x24 matrix of IDs
+  """
+  nrows = 16
+  ncols = 24
+  result = copy.deepcopy(druglist)
+  for i in range(nrows):
+    for j in range(ncols):
+      result[i][j].set_address(i, j)
+      if (input[i][j][0] == 0) and (input[i][j][1] == 0):
+        (result[i][j].ID, result[i][j].pno, result[i][j].ppos, result[i][j].w, result[i][j].mw, result[i][j].cono) = ("-1", -1, "-1", -1., -1., -1)
+      else:
+        result[i][j] = druglist[int(input[i][j][0])][int(input[i][j][1])]
+  return result
+#
+
 def intializeHitList(nrows, ncols):
   """
   :param nrows: # of rows 
